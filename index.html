@@ -971,6 +971,376 @@
   openChat(1);
 </script>
 https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js
+  <script type="module">
+  import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+  const auth = window.chatConnectFirebase.auth;
+  const app = document.getElementById("app");
+
+  app.style.display = "none";
+
+  const loginPage = document.createElement("div");
+
+  loginPage.style.cssText = `
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:#f5f7fb;
+    font-family:Arial,sans-serif;
+  `;
+
+  loginPage.innerHTML = `
+    <div style="
+      background:white;
+      padding:28px;
+      border-radius:20px;
+      width:100%;
+      max-width:380px;
+      box-shadow:0 8px 30px #00000010;
+    ">
+      <h1 style="text-align:center;color:#ff6b35">
+        💬 ChatConnect
+      </h1>
+
+      <p style="text-align:center;color:#777;margin:12px 0 24px">
+        Connect with everyone.
+      </p>
+
+      <div id="authMessage" style="margin-bottom:12px"></div>
+
+      <form id="authForm">
+        <input
+          id="email"
+          type="email"
+          placeholder="Email address"
+          autocomplete="email"
+          required
+          style="
+            width:100%;
+            padding:14px;
+            margin-bottom:12px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            box-sizing:border-box;
+          "
+        >
+
+        <input
+          id="password"
+          type="password"
+          placeholder="Password (at least 6 characters)"
+          autocomplete="current-password"
+          minlength="6"
+          required
+          style="
+            width:100%;
+            padding:14px;
+            margin-bottom:16px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            box-sizing:border-box;
+          "
+        >
+
+        <button
+          id="submitAuth"
+          type="submit"
+          style="
+            width:100%;
+            padding:14px;
+            border:0;
+            border-radius:10px;
+            background:#ff6b35;
+            color:white;
+            font-weight:bold;
+          "
+        >
+          Log In
+        </button>
+      </form>
+
+      <p style="text-align:center;margin-top:20px">
+        <span id="toggleText">New to ChatConnect?</span>
+        <button
+          id="toggleAuth"
+          type="button"
+          style="
+            border:0;
+            background:none;
+            color:#ff6b35;
+            font-weight:bold;
+          "
+        >
+          Create account
+        </button>
+      </p>
+    </div>
+  `;
+
+  document.body.insertBefore(loginPage, app);
+
+  let isRegistering = false;
+
+  const message = document.getElementById("authMessage");
+  const form = document.getElementById("authForm");
+  const submitButton = document.getElementById("submitAuth");
+  const toggleButton = document.getElementById("toggleAuth");
+  const toggleText = document.getElementById("toggleText");
+
+  toggleButton.addEventListener("click", () => {
+    isRegistering = !isRegistering;
+
+    submitButton.textContent =
+      isRegistering ? "Create Account" : "Log In";
+
+    toggleButton.textContent =
+      isRegistering ? "Log In" : "Create account";
+
+    toggleText.textContent =
+      isRegistering
+        ? "Already have an account?"
+        : "New to ChatConnect?";
+
+    document.getElementById("password").autocomplete =
+      isRegistering ? "new-password" : "current-password";
+
+    message.textContent = "";
+  });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    submitButton.disabled = true;
+    message.style.color = "#555";
+    message.textContent = "Please wait...";
+
+    try {
+      if (isRegistering) {
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+      } else {
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+      }
+    } catch (error) {
+      const errors = {
+        "auth/email-already-in-use":
+          "This email already has an account. Please log in.",
+        "auth/invalid-email":
+          "Please enter a valid email address.",
+        "auth/weak-password":
+          "Choose a stronger password with at least 6 characters.",
+        "auth/invalid-credential":
+          "Email or password is incorrect.",
+        "auth/network-request-failed":
+          "Network error. Check your internet connection."
+      };
+
+      message.style.color = "#c62828";
+
+      message.textContent =
+        errors[error.code] || "Unable to sign in. Please try again.";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      loginPage.style.display = "none";
+      app.style.display = "flex";
+
+      const name =
+        user.displayName ||
+        user.email.split("@")[0];
+
+      const nameElement = document.getElementById("myName");
+
+      if (nameElement) {
+        nameElement.textContent = name;
+      }
+
+    } else {
+      app.style.display = "none";
+      loginPage.style.display = "flex";
+    }
+  });
+
+  window.chatConnectLogout = async function () {
+    await signOut(auth);
+  };
+  </script>
+  <script type="module">
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+const auth = window.chatConnectFirebase?.auth;
+const app = document.getElementById("app");
+
+if (!auth || !app) {
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    "<p>Setup error: Firebase or the app element is missing.</p>"
+  );
+} else {
+  app.style.display = "none";
+
+  const loginPage = document.createElement("div");
+
+  loginPage.style.cssText = `
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#eef2ff;
+    font-family:Arial,sans-serif;
+    padding:20px;
+    box-sizing:border-box;
+  `;
+
+  loginPage.innerHTML = `
+    <div style="
+      background:white;
+      padding:25px;
+      border-radius:15px;
+      width:100%;
+      max-width:350px;
+      box-sizing:border-box;
+      box-shadow:0 4px 20px #0002;
+    ">
+      <h2 style="text-align:center;color:#4f46e5">
+        ChatConnect
+      </h2>
+
+      <p style="text-align:center">
+        Connect with your friends
+      </p>
+
+      <form id="authForm">
+        <input
+          id="email"
+          type="email"
+          placeholder="Email address"
+          required
+          style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box"
+        >
+
+        <input
+          id="password"
+          type="password"
+          placeholder="Password (at least 6 characters)"
+          minlength="6"
+          required
+          style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box"
+        >
+
+        <button
+          id="submitBtn"
+          type="submit"
+          style="width:100%;padding:12px;background:#4f46e5;color:white;border:0;border-radius:8px;margin-top:10px"
+        >
+          Log In
+        </button>
+      </form>
+
+      <p id="authMessage" style="color:#b91c1c;text-align:center"></p>
+
+      <p style="text-align:center">
+        <span id="toggleText">Don't have an account?</span>
+        <button
+          id="toggleBtn"
+          type="button"
+          style="border:0;background:none;color:#4f46e5"
+        >
+          Register
+        </button>
+      </p>
+    </div>
+  `;
+
+  document.body.insertBefore(loginPage, app);
+
+  let registering = false;
+
+  document.getElementById("toggleBtn").onclick = () => {
+    registering = !registering;
+
+    document.getElementById("submitBtn").textContent =
+      registering ? "Create Account" : "Log In";
+
+    document.getElementById("toggleText").textContent =
+      registering ? "Already have an account?" : "Don't have an account?";
+
+    document.getElementById("toggleBtn").textContent =
+      registering ? "Log In" : "Register";
+
+    document.getElementById("authMessage").textContent = "";
+  };
+
+  document.getElementById("authForm").onsubmit = async event => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("authMessage");
+    const button = document.getElementById("submitBtn");
+
+    message.textContent = "";
+    button.disabled = true;
+
+    try {
+      if (registering) {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (error) {
+      message.textContent =
+        error.code === "auth/email-already-in-use"
+          ? "This email is already registered. Please log in."
+          : error.code === "auth/invalid-credential"
+          ? "Incorrect email or password."
+          : error.code === "auth/weak-password"
+          ? "Choose a stronger password."
+          : error.message;
+    } finally {
+      button.disabled = false;
+    }
+  };
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      loginPage.style.display = "none";
+      app.style.display = "flex";
+    } else {
+      app.style.display = "none";
+      loginPage.style.display = "flex";
+    }
+  });
+
+  window.chatConnectLogout = () => signOut(auth);
+}
+  </script>
 </body>
   
  ,<script type="module">
