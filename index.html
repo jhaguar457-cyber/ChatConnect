@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ChatConnect - Connect with Everyone</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e95520;
+      --background: #f5f7fb;
+      --white: #ffffff;
+      --text: #202536;
+      --muted: #8b91a3;
+      --border: #e9ecf2;
+      --green: #25c685;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+      max-width: 1500px;
+      margin: auto;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+
+    .sidebar {
+      width: 340px;
+      min-width: 300px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: white;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 25px 22px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      background: var(--primary);
+      color: white;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      font-size: 25px;
+    }
+
+    .brand h1 {
+      font-size: 23px;
+      letter-spacing: -1px;
+    }
+
+    .brand h1 span {
+      color: var(--primary);
+    }
+
+    .brand p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .search-box {
+      margin: 0 18px 20px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px 13px 40px;
+      outline: none;
+      background: #f8f9fc;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      color: var(--muted);
+    }
+
+    .section-title {
+      padding: 0 22px 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .new-chat {
+      border: none;
+      background: #fff0e9;
+      color: var(--primary-dark);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .chat-list {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 18px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .chat-item:hover {
+      background: #fafbfe;
+    }
+
+    .chat-item.active {
+      background: #fff4ef;
+      border-left-color: var(--primary);
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 23px;
+      flex-shrink: 0;
+      position: relative;
+      background: #f0e5ff;
+    }
+
+    .online-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--green);
+      border: 2px solid white;
+      border-radius: 50%;
+      bottom: 0;
+      right: 0;
+    }
+
+    .chat-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-details h3 {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .chat-details p {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-meta {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .chat-time {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .unread {
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      padding: 3px 7px;
+      font-size: 10px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-info strong {
+      font-size: 13px;
+    }
+
+    .profile-info p {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .profile-menu {
+      border: none;
+      background: none;
+      font-size: 22px;
+    }
+
+    /* Main chat */
+
+    .main-chat {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #fcfcfe;
+    }
+
+    .chat-header {
+      padding: 18px 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: white;
+    }
+
+    .chat-header .avatar {
+      width: 45px;
+      height: 45px;
+    }
+
+    .header-info {
+      flex: 1;
+    }
+
+    .header-info h2 {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .header-info p {
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-button {
+      border: 1px solid var(--border);
+      background: white;
+      width: 39px;
+      height: 39px;
+      border-radius: 11px;
+      font-size: 17px;
+    }
+
+    .icon-button:hover {
+      background: #fff0e9;
+    }
+
+    .back-button {
+      display: none;
+    }
+
+    /* Messages */
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 17px;
+    }
+
+    .date-divider {
+      text-align: center;
+      margin: 5px 0 10px;
+    }
+
+    .date-divider span {
+      background: #eef0f5;
+      padding: 8px 13px;
+      border-radius: 20px;
+      color: #747b8e;
+      font-size: 11px;
+    }
+
+    .message-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-end;
+      max-width: 80%;
+    }
+
+    .message-row.mine {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f0e5ff;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .message-bubble {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 13px 16px;
+      border-radius: 15px 15px 15px 3px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .mine .message-bubble {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      border-radius: 15px 15px 3px 15px;
+    }
+
+    .message-time {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 0 3px;
+    }
+
+    .mine .message-time {
+      text-align: right;
+    }
+
+    /* Message input */
+
+    .composer-wrap {
+      padding: 15px 22px 20px;
+      background: white;
+      border-top: 1px solid var(--border);
+    }
+
+    .typing-indicator {
+      display: none;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 0 5px 10px;
+    }
+
+    .composer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 7px 8px 7px 14px;
+      background: #fafbfe;
+    }
+
+    .composer input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    .attach-button {
+      border: none;
+      background: none;
+      font-size: 20px;
+      color: var(--muted);
+    }
+
+    .send-button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      border-radius: 11px;
+      width: 43px;
+      height: 43px;
+      font-size: 20px;
+    }
+
+    .send-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .welcome-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .welcome-icon {
+      font-size: 65px;
+      margin-bottom: 18px;
+    }
+
+    .welcome-screen h2 {
+      margin-bottom: 10px;
+    }
+
+    .welcome-screen p {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 320px;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 650px) {
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        border-right: none;
+      }
+
+      .main-chat {
+        display: none;
+        width: 100%;
+      }
+
+      .app.show-chat .sidebar {
+        display: none;
+      }
+
+      .app.show-chat .main-chat {
+        display: flex;
+      }
+
+      .chat-header {
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .back-button {
+        display: block;
+      }
+
+      .header-actions {
+        gap: 4px;
+      }
+
+      .icon-button {
+        width: 34px;
+        height: 34px;
+      }
+
+      .messages {
+        padding: 17px 12px;
+      }
+
+      .message-row {
+        max-width: 92%;
+      }
+
+      .composer-wrap {
+        padding: 12px;
+      }
+
+      .brand {
+        padding: 17px 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app" id="app">
+
+  <!-- LEFT SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-icon">💬</div>
+
+      <div>
+        <h1>Chat<span>Connect</span></h1>
+        <p>Your world, one conversation.</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search conversations..."
+        aria-label="Search conversations"
+      >
+    </div>
+
+    <div class="section-title">
+      <span>MESSAGES</span>
+      <button class="new-chat" id="newChatBtn">+ New</button>
+    </div>
+
+    <div class="chat-list" id="chatList"></div>
+
+    <div class="profile">
+      <div class="avatar">👤</div>
+
+      <div class="profile-info">
+        <strong id="myName">Guest User</strong>
+        <p>Demo profile</p>
+      </div>
+
+      <button
+        class="profile-menu"
+        id="editProfileBtn"
+        aria-label="Edit profile"
+      >⋮</button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN CHAT AREA -->
+
+  <main class="main-chat" id="mainChat">
+
+    <div class="chat-header" id="chatHeader">
+
+      <button class="icon-button back-button" id="backBtn"
+        aria-label="Back to conversations">←</button>
+
+      <div class="avatar" id="headerAvatar">👩</div>
+
+      <div class="header-info">
+        <h2 id="headerName">Ama Mensah</h2>
+        <p id="headerStatus">● Demo conversation</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-button" id="callBtn"
+          aria-label="Call">☎</button>
+
+        <button class="icon-button" id="detailsBtn"
+          aria-label="Conversation details">ⓘ</button>
+      </div>
+
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="composer-wrap">
+
+      <div class="typing-indicator" id="typingIndicator">
+        Demo: preparing a reply...
+      </div>
+
+      <form class="composer" id="messageForm">
+
+        <button type="button" class="attach-button"
+          id="emojiBtn" aria-label="Add emoji">☺</button>
+
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Type your message..."
+          autocomplete="off"
+          maxlength="2000"
+          aria-label="Message"
+        >
+
+        <button type="submit" class="send-button"
+          aria-label="Send message">➤</button>
+
+      </form>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  const app = $("app");
+  const chatList = $("chatList");
+  const messages = $("messages");
+  const messageInput = $("messageInput");
+  const searchInput = $("searchInput");
+
+  let nextId = 4;
+  let activeChatId = 1;
+  let typingTimer;
+
+  const myName = localStorage.getItem("cc_name") || "Guest User";
+
+  $("myName").textContent = myName;
+
+  const chats = [
+    {
+      id: 1,
+      name: "Ama Mensah",
+      avatar: "👩🏽",
+      color: "#ffe7db",
+      online: true,
+      preview: "Hey! How are you?",
+      time: "10:30",
+      unread: 2,
+      messages: [
+        {
+          text: "Hello! 👋 Welcome to ChatConnect.",
+          mine: false,
+          time: "10:25"
+        },
+        {
+          text: "Hi Ama! Nice to hear from you.",
+          mine: true,
+          time: "10:27"
+        },
+        {
+          text: "Hey! How are you?",
+          mine: false,
+          time: "10:30"
+        }
+      ]
+    },
+
+    {
+      id: 2,
+      name: "Kwame Boateng",
+      avatar: "👨🏽",
+      color: "#e0eaff",
+      online: true,
+      preview: "See you tomorrow!",
+      time: "09:45",
+      unread: 0,
+      messages: [
+        {
+          text: "Good morning!",
+          mine: false,
+          time: "09:40"
+        },
+        {
+          text: "See you tomorrow!",
+          mine: false,
+          time: "09:45"
+        }
+      ]
+    },
+
+    {
+      id: 3,
+      name: "Akosua",
+      avatar: "👩🏾",
+      color: "#e4f8e9",
+      online: false,
+      preview: "Thank you 😊",
+      time: "Yesterday",
+      unread: 0,
+      messages: [
+        {
+          text: "It was nice talking to you.",
+          mine: false,
+          time: "Yesterday"
+        },
+        {
+          text: "Thank you 😊",
+          mine: true,
+          time: "Yesterday"
+        }
+      ]
+    }
+  ];
+
+  function getActiveChat() {
+    return chats.find(chat => chat.id === activeChatId);
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function renderChatList() {
+    const query = searchInput.value.toLowerCase().trim();
+
+    const filtered = chats.filter(chat =>
+      chat.name.toLowerCase().includes(query) ||
+      chat.preview.toLowerCase().includes(query)
+    );
+
+    chatList.innerHTML = "";
+
+    if (!filtered.length) {
+      chatList.innerHTML =
+        '<p style="padding:20px;color:#8b91a3;font-size:13px;">' +
+        'No conversations found.</p>';
+      return;
+    }
+
+    filtered.forEach(chat => {
+      const item = document.createElement("div");
+
+      item.className =
+        "chat-item" + (chat.id === activeChatId ? " active" : "");
+
+      item.innerHTML = `
+        <div class="avatar" style="background:${chat.color}">
+          ${chat.avatar}
+          ${chat.online ? '<span class="online-dot"></span>' : ""}
+        </div>
+
+        <div class="chat-details">
+          <h3>${escapeHTML(chat.name)}</h3>
+          <p>${escapeHTML(chat.preview)}</p>
+        </div>
+
+        <div class="chat-meta">
+          <span class="chat-time">${escapeHTML(chat.time)}</span>
+          ${chat.unread
+            ? `<span class="unread">${chat.unread}</span>`
+            : ""}
+        </div>
+      `;
+
+      item.addEventListener("click", () => openChat(chat.id));
+
+      chatList.appendChild(item);
+    });
+  }
+
+  function renderMessages() {
+    const chat = getActiveChat();
+
+    if (!chat) return;
+
+    $("headerName").textContent = chat.name;
+    $("headerAvatar").textContent = chat.avatar;
+    $("headerAvatar").style.background = chat.color;
+    $("headerStatus").textContent =
+      chat.online ? "● Online (demo)" : "● Demo conversation";
+
+    messages.innerHTML = `
+      <div class="date-divider">
+        <span>Today · Demo messages</span>
+      </div>
+    `;
+
+    chat.messages.forEach(message => {
+      const row = document.createElement("div");
+
+      row.className =
+        "message-row" + (message.mine ? " mine" : "");
+
+      row.innerHTML = `
+        <div class="message-avatar">${message.mine ? "👤" : chat.avatar}</div>
+
+        <div class="message-content">
+          <div class="message-bubble">${escapeHTML(message.text)}</div>
+          <span class="message-time">
+            ${escapeHTML(message.time)}
+            ${message.mine ? " ✓" : ""}
+          </span>
+        </div>
+      `;
+
+      messages.appendChild(row);
+    });
+
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function openChat(id) {
+    activeChatId = id;
+
+    const chat = getActiveChat();
+
+    if (chat) chat.unread = 0;
+
+    renderChatList();
+    renderMessages();
+
+    if (window.innerWidth <= 650) {
+      app.classList.add("show-chat");
+    }
+  }
+
+  function currentTime() {
+    return new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  function sendMessage(text) {
+    const chat = getActiveChat();
+
+    if (!chat || !text.trim()) return;
+
+    const cleanText = text.trim();
+    const time = currentTime();
+
+    chat.messages.push({
+      text: cleanText,
+      mine: true,
+      time: time
+    });
+
+    chat.preview = cleanText;
+    chat.time = time;
+
+    renderChatList();
+    renderMessages();
+
+    /*
+      This is a front-end demo.
+      No other person receives this message yet.
+      Firebase will be connected in a later step.
+    */
+
+    $("typingIndicator").style.display = "block";
+
+    clearTimeout(typingTimer);
+
+    typingTimer = setTimeout(() => {
+      $("typingIndicator").style.display = "none";
+    }, 1200);
+  }
+
+  $("messageForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const text = messageInput.value;
+
+    if (!text.trim()) return;
+
+    sendMessage(text);
+    messageInput.value = "";
+    messageInput.focus();
+  });
+
+  searchInput.addEventListener("input", renderChatList);
+
+  $("backBtn").addEventListener("click", () => {
+    app.classList.remove("show-chat");
+  });
+
+  $("emojiBtn").addEventListener("click", () => {
+    messageInput.value += " 😊";
+    messageInput.focus();
+  });
+
+  $("newChatBtn").addEventListener("click", () => {
+    const name = prompt("Enter the name of your demo contact:");
+
+    if (!name || !name.trim()) return;
+
+    const newChat = {
+      id: nextId++,
+      name: name.trim().slice(0, 50),
+      avatar: "🙂",
+      color: "#fff0e9",
+      online: false,
+      preview: "Start a conversation",
+      time: currentTime(),
+      unread: 0,
+      messages: []
+    };
+
+    chats.unshift(newChat);
+
+    openChat(newChat.id);
+  });
+
+  $("editProfileBtn").addEventListener("click", () => {
+    const name = prompt("Enter your display name:", myName);
+
+    if (!name || !name.trim()) return;
+
+    const cleanName = name.trim().slice(0, 50);
+
+    localStorage.setItem("cc_name", cleanName);
+    $("myName").textContent = cleanName;
+
+    alert("Demo profile updated!");
+  });
+
+  $("callBtn").addEventListener("click", () => {
+    alert("Voice calling will require an additional feature.");
+  });
+
+  $("detailsBtn").addEventListener("click", () => {
+    const chat = getActiveChat();
+
+    alert(
+      "Contact: " + chat.name +
+      "\nStatus: Demo conversation" +
+      "\n\nReal contact details will be added later."
+    );
+  });
+
+  renderChatList();
+  openChat(1);
+</script>
+
+</body>
+</html>
