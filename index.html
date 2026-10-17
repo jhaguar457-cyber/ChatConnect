@@ -849,7 +849,36 @@ const firebaseConfig = {
 
           chatPage.classList.remove("hidden");
 
-          userEmail.textContent = user.email || "Chat member";
+          
+const profileRef = doc(db, "users", user.uid);
+
+getDoc(profileRef)
+  .then(async (profileSnap) => {
+    if (profileSnap.exists()) {
+      // Load the saved profile
+      const profile = profileSnap.data();
+
+      userEmail.textContent =
+        profile.displayName || user.email || "Chat member";
+    } else {
+      // Create a basic profile for a new user
+      const newProfile = {
+        uid: user.uid,
+        email: user.email || "",
+        displayName: user.displayName || "Chat member",
+        createdAt: serverTimestamp()
+      };
+
+      await setDoc(profileRef, newProfile);
+
+      userEmail.textContent = newProfile.displayName;
+    }
+  })
+  .catch((error) => {
+    console.error("Error loading user profile:", error);
+    userEmail.textContent = user.email || "Chat member";
+  });
+
 
           startMessageListener(user);
 
