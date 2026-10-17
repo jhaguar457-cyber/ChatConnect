@@ -1,458 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatConnect</title>
 
-  <title>ChatConnect</title>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #1e293b;
-    }
+button, input {
+  font: inherit;
+}
 
-    button, input {
-      font: inherit;
-    }
+button {
+  cursor: pointer;
+}
 
-    button {
-      cursor: pointer;
-    }
+.hidden {
+  display: none !important;
+}
 
-    .hidden {
-      display: none !important;
-    }
+#authPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+}
 
-    /* LOGIN AND REGISTRATION */
+.auth-card {
+  background: white;
+  padding: 28px;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 10px 35px #0002;
+}
 
-    #authPage {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-    }
+.logo {
+  text-align: center;
+  font-size: 29px;
+  font-weight: bold;
+  color: #4f46e5;
+  margin-bottom: 8px;
+}
 
-    .auth-card {
-      background: white;
-      padding: 28px;
-      border-radius: 18px;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: 0 10px 35px #0002;
-    }
+.subtitle {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 25px;
+}
 
-    .logo {
-      text-align: center;
-      font-size: 29px;
-      font-weight: bold;
-      color: #4f46e5;
-      margin-bottom: 8px;
-    }
+.auth-card input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  margin-bottom: 13px;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #64748b;
-      margin-bottom: 25px;
-    }
+.primary-btn {
+  width: 100%;
+  padding: 13px;
+  background: #4f46e5;
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  font-weight: bold;
+}
 
-    .auth-card input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #cbd5e1;
-      border-radius: 9px;
-      margin-bottom: 13px;
-      outline: none;
-    }
+.primary-btn:disabled {
+  opacity: 0.6;
+}
 
-    .auth-card input:focus {
-      border-color: #4f46e5;
-    }
+.switch-text {
+  text-align: center;
+  margin-top: 20px;
+}
 
-    .primary-btn {
-      width: 100%;
-      padding: 13px;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 9px;
-      font-weight: bold;
-    }
+.switch-btn {
+  background: none;
+  border: 0;
+  color: #4f46e5;
+  font-weight: bold;
+}
 
-    .primary-btn:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
+.status-message {
+  color: #dc2626;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
 
-    .switch-text {
-      text-align: center;
-      margin-top: 20px;
-    }
+.notice {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 10px;
+  line-height: 1.5;
+}
 
-    .switch-btn {
-      background: none;
-      border: none;
-      color: #4f46e5;
-      font-weight: bold;
-    }
+#chatPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
 
-    .status-message {
-      color: #dc2626;
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
+.chat-container {
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  min-height: 450px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px #0001;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
-    /* CHAT APPLICATION */
+.chat-header {
+  background: #4f46e5;
+  color: white;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
 
-    #chatPage {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-    }
+.chat-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
 
-    .chat-container {
-      width: 100%;
-      max-width: 900px;
-      height: 90vh;
-      min-height: 450px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 5px 25px #0001;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+.chat-header p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  opacity: 0.9;
+  overflow-wrap: anywhere;
+}
 
-    .chat-header {
-      background: #4f46e5;
-      color: white;
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
+.profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
 
-    .chat-header h2 {
-      margin: 0;
-      font-size: 22px;
-    }
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: white;
+}
 
-    .chat-header p {
-      margin: 5px 0 0;
-      font-size: 12px;
-      opacity: 0.9;
-      overflow-wrap: anywhere;
-    }
+.header-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    .logout-btn {
-      background: white;
-      color: #4f46e5;
-      border: none;
-      border-radius: 8px;
-      padding: 9px 12px;
-    }
+.logout-btn {
+  background: white;
+  color: #4f46e5;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
 
-    .room-title {
-      padding: 12px 16px;
-      background: #eef2ff;
-      font-weight: bold;
-      border-bottom: 1px solid #e2e8f0;
-    }
+.room-title {
+  padding: 12px 16px;
+  background: #eef2ff;
+  font-weight: bold;
+  border-bottom: 1px solid #e2e8f0;
+}
 
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #f8fafc;
-    }
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafc;
+}
 
-    .message {
-      max-width: 85%;
-      align-self: flex-start;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px 12px 12px 3px;
-      padding: 10px 13px;
-      overflow-wrap: anywhere;
-    }
+.message {
+  max-width: 85%;
+  align-self: flex-start;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px 12px 12px 3px;
+  padding: 10px 13px;
+  overflow-wrap: anywhere;
+}
 
-    .message.mine {
-      align-self: flex-end;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 12px 12px 3px 12px;
-    }
+.message.mine {
+  align-self: flex-end;
+  background: #4f46e5;
+  color: white;
+  border: 0;
+  border-radius: 12px 12px 3px 12px;
+}
 
-    .message-author {
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 5px;
-      opacity: 0.8;
-    }
+.message-author {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  opacity: 0.8;
+}
 
-    .message-text {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
+.message-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 
-    .message-time {
-      font-size: 10px;
-      margin-top: 6px;
-      opacity: 0.7;
-      text-align: right;
-    }
+.message-time {
+  font-size: 10px;
+  margin-top: 6px;
+  opacity: 0.7;
+  text-align: right;
+}
 
-    .chat-footer {
-      padding: 12px;
-      border-top: 1px solid #e2e8f0;
-      background: white;
-    }
+.chat-footer {
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+  background: white;
+}
 
-    #messageForm {
-      display: flex;
-      gap: 8px;
-    }
+#messageForm {
+  display: flex;
+  gap: 8px;
+}
 
-    #messageInput {
-      min-width: 0;
-      flex: 1;
-      padding: 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      outline: none;
-    }
+#messageInput {
+  min-width: 0;
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+}
 
-    #messageInput:focus {
-      border-color: #4f46e5;
-    }
+#sendBtn {
+  background: #4f46e5;
+  color: white;
+  border: 0;
+  padding: 0 18px;
+  border-radius: 10px;
+}
 
-    #sendBtn {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      padding: 0 18px;
-      border-radius: 10px;
-    }
+#chatStatus {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #64748b;
+}
 
-    #chatStatus {
-      font-size: 12px;
-      margin-top: 8px;
-      color: #64748b;
-    }
+#profileModal {
+  position: fixed;
+  inset: 0;
+  background: #0008;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
 
-    .notice {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+.profile-card {
+  background: white;
+  width: 100%;
+  max-width: 380px;
+  padding: 25px;
+  border-radius: 16px;
+  max-height: 90vh;
+  overflow: auto;
+}
 
-    @media (max-width: 500px) {
-      #chatPage {
-        padding: 0;
-      }
+.profile-card h2 {
+  color: #4f46e5;
+  margin-top: 0;
+}
 
-      .chat-container {
-        height: 100vh;
-        min-height: 0;
-        border-radius: 0;
-      }
+.profile-card label {
+  display: block;
+  margin-top: 12px;
+}
 
-      .chat-header {
-        padding: 14px;
-      }
+.profile-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
 
-      .chat-header h2 {
-        font-size: 19px;
-      }
-    }
-  </style>
+.secondary-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 8px;
+}
+
+@media (max-width: 500px) {
+  #chatPage {
+    padding: 0;
+  }
+
+  .chat-container {
+    height: 100vh;
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  .chat-header {
+    padding: 12px;
+  }
+
+  .chat-header h2 {
+    font-size: 19px;
+  }
+
+  .logout-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- LOGIN AND REGISTRATION PAGE -->
+<section id="authPage">
+  <div class="auth-card">
+    <div class="logo">ChatConnect 💬</div>
 
-  <section id="authPage">
-    <div class="auth-card">
+    <p class="subtitle">
+      Connect with friends, wherever they are.
+    </p>
 
-      <div class="logo">ChatConnect</div>
-
-      <p class="subtitle">
-        Connect with friends, wherever they are.
-      </p>
-
-      <form id="authForm">
-
-        <input
-          id="email"
-          type="email"
-          placeholder="Email address"
-          autocomplete="email"
-          required
-        >
-
-        <input
-          id="password"
-          type="password"
-          placeholder="Password (at least 6 characters)"
-          minlength="6"
-          autocomplete="current-password"
-          required
-        >
-
-        <button
-          id="authSubmit"
-          class="primary-btn"
-          type="submit"
-        >
-          Log In
-        </button>
-
-      </form>
-
-      <p id="authStatus" class="status-message"></p>
-
-      <div class="switch-text">
-        <span id="switchDescription">Don't have an account?</span>
-
-        <button
-          id="switchMode"
-          class="switch-btn"
-          type="button"
-        >
-          Register
-        </button>
-      </div>
-
-      <p class="notice">
-        Use an email address you control. Never share your
-        password with other people.
-      </p>
-
-    </div>
-  </section>
-
-
-  <!-- CHAT PAGE -->
-
-  <section id="chatPage" class="hidden">
-
-    <div class="chat-container">
-
-      <header class="chat-header">
-  <div>
-    <h2>ChatConnect 💬</h2>
-
-    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
-      <img
-        id="headerAvatar"
-        src="https://placehold.co/50x50/4f46e5/ffffff?text=U"
-        alt="Profile picture"
-        style="width:40px;height:40px;border-radius:50%;object-fit:cover;"
+    <form id="authForm">
+      <input
+        id="email"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
       >
 
-      <div>
-        <p id="profileName" style="margin:0;font-weight:bold;">
-          Chat member
-        </p>
+      <input
+        id="password"
+        type="password"
+        placeholder="Password (at least 6 characters)"
+        minlength="6"
+        autocomplete="current-password"
+        required
+      >
 
-        <p id="userEmail" style="margin-top:4px;">
-          Connecting...
-        </p>
-      </div>
+      <button id="authSubmit" class="primary-btn" type="submit">
+        Log In
+      </button>
+    </form>
+
+    <p id="authStatus" class="status-message" role="status"></p>
+
+    <div class="switch-text">
+      <span id="switchDescription">Don't have an account?</span>
+      <button id="switchMode" class="switch-btn" type="button">
+        Register
+      </button>
     </div>
+
+    <p class="notice">
+      Use an email address you control. Never share your password.
+    </p>
   </div>
+</section>
 
-  <div style="display:flex;flex-direction:column;gap:8px;">
-    <button
-      id="editProfileBtn"
-      class="logout-btn"
-      type="button"
-    >
-      Edit Profile
-    </button>
+<section id="chatPage" class="hidden">
+  <div class="chat-container">
 
-    <button
-      id="logoutBtn"
-      class="logout-btn"
-      type="button"
-    >
-      Log Out
-    </button>
-  </div>
-</header>
+    <header class="chat-header">
+      <div>
+        <h2>ChatConnect 💬</h2>
 
-      <div class="room-title">
-        🌍 Public Chat Room
-      </div>
-
-      <div id="messages" aria-live="polite">
-        <p>Loading messages...</p>
-      </div>
-
-      <footer class="chat-footer">
-
-        <form id="messageForm">
-
-          <input
-            id="messageInput"
-            type="text"
-            maxlength="1000"
-            placeholder="Write a message..."
-            autocomplete="off"
-            required
+        <div class="profile-summary">
+          <img
+            id="headerAvatar"
+            class="avatar"
+            src="https://placehold.co/50x50/4f46e5/ffffff?text=U"
+            alt="Profile picture"
           >
 
-          <button id="sendBtn" type="submit">
-            Send
-          </button>
-
-        </form>
-
-        <div id="chatStatus">
-          Connecting to chat...
+          <div>
+            <p id="profileName" style="margin:0;font-weight:bold">
+              Chat member
+            </p>
+            <p id="userEmail">Connecting...</p>
+          </div>
         </div>
+      </div>
 
-      </footer>
+      <div class="header-buttons">
+        <button id="editProfileBtn" class="logout-btn" type="button">
+          Edit Profile
+        </button>
 
+        <button id="logoutBtn" class="logout-btn" type="button">
+          Log Out
+        </button>
+      </div>
+    </header>
+
+    <div class="room-title">🌍 Public Chat Room</div>
+
+    <div id="messages" aria-live="polite">
+      <p>Loading messages...</p>
     </div>
 
-  </section>
+    <footer class="chat-footer">
+      <form id="messageForm">
+        <input
+          id="messageInput"
+          type="text"
+          maxlength="1000"
+          placeholder="Write a message..."
+          autocomplete="off"
+          required
+        >
 
+        <button id="sendBtn" type="submit">Send</button>
+      </form>
 
-  <!-- FIREBASE AND CHATCONNECT LOGIC -->
+      <div id="chatStatus">Connecting to chat...</div>
+    </footer>
 
-  <script type="module">
+  </div>
+</section>
 
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+<div
+  id="profileModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="profileTitle"
+>
+  <div class="profile-card">
+    <h2 id="profileTitle">My Profile</h2>
 
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    <label for="displayNameInput">Display name</label>
+    <input
+      id="displayNameInput"
+      type="text"
+      maxlength="40"
+      placeholder="Enter your display name"
+    >
 
-    imimport {
+    <label for="photoURLInput">Profile picture URL (optional)</label>
+    <input
+      id="photoURLInput"
+      type="url"
+      placeholder="https://..."
+    >
+
+    <p class="notice">
+      Use a direct HTTPS image link. Leave blank to use the default picture.
+    </p>
+
+    <p id="profileStatus" class="status-message" role="status"></p>
+
+    <button id="saveProfileBtn" class="primary-btn" type="button">
+      Save Profile
+    </button>
+
+    <button id="cancelProfileBtn" class="secondary-btn" type="button">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
   getFirestore,
   collection,
   addDoc,
@@ -460,19 +514,9 @@
   orderBy,
   limit,
   onSnapshot,
-  serverTimestamp,
-  doc,
-  getDoc,
-  setDoc
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-
-    // =====================================
-    // STEP 1: INSERT YOUR FIREBASE CONFIG
-    // =====================================
-
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyB5RteOwv-vOvGDWTMrB8oXF7sZtLPEGiQ",
   authDomain: "chatconnect-e6779.firebaseapp.com",
@@ -483,471 +527,235 @@ const firebaseConfig = {
   measurementId: "G-S630G8S1KR"
 };
 
-    // =====================================
-    // STEP 2: INITIALIZE FIREBASE
-    // =====================================
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    const authPage = document.getElementById("authPage");
-    const chatPage = document.getElementById("chatPage");
+const messagesCollection = collection(db, "messages");
 
-    const authForm = document.getElementById("authForm");
-    const authSubmit = document.getElementById("authSubmit");
-    const authStatus = document.getElementById("authStatus");
+const el = id => document.getElementById(id);
 
-    const switchModeBtn = document.getElementById("switchMode");
-    const switchDescription = document.getElementById("switchDescription");
+const authPage = el("authPage");
+const chatPage = el("chatPage");
+const authForm = el("authForm");
 
-    const userEmail = document.getElementById("userEmail");
-    const logoutBtn = document.getElementById("logoutBtn");
+const authSubmit = el("authSubmit");
+const authStatus = el("authStatus");
+const switchMode = el("switchMode");
+const switchDescription = el("switchDescription");
 
-    const messagesElement = document.getElementById("messages");
-    const messageForm = document.getElementById("messageForm");
-    const messageInput = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const chatStatus = document.getElementById("chatStatus");
+const userEmail = el("userEmail");
+const profileName = el("profileName");
+const headerAvatar = el("headerAvatar");
 
-    let registering = false;
-    let stopListeningToMessages = null;
+const messagesElement = el("messages");
+const messageForm = el("messageForm");
+const messageInput = el("messageInput");
+const sendBtn = el("sendBtn");
+const chatStatus = el("chatStatus");
 
-    function showAuthError(error) {
-      const code = error.code || "";
+const profileModal = el("profileModal");
+const profileStatus = el("profileStatus");
+const displayNameInput = el("displayNameInput");
+const photoURLInput = el("photoURLInput");
 
-      const errors = {
-        "auth/email-already-in-use":
-          "This email is already registered. Please log in.",
+let registering = false;
+let stopListeningToMessages = null;
 
-        "auth/invalid-credential":
-          "Incorrect email or password.",
+const defaultAvatar =
+  "https://placehold.co/50x50/4f46e5/ffffff?text=U";
 
-        "auth/invalid-email":
-          "Please enter a valid email address.",
+function showAuthError(error) {
+  const messages = {
+    "auth/email-already-in-use":
+      "This email is already registered. Please log in.",
 
-        "auth/weak-password":
-          "Please choose a stronger password.",
+    "auth/invalid-credential":
+      "Incorrect email or password.",
 
-        "auth/too-many-requests":
-          "Too many attempts. Please try again later.",
+    "auth/invalid-email":
+      "Please enter a valid email address.",
 
-        "auth/network-request-failed":
-          "Network error. Check your internet connection.",
+    "auth/weak-password":
+      "Please choose a stronger password.",
 
-        "permission-denied":
-          "Access denied. Please check your Firestore security rules."
-      };
+    "auth/too-many-requests":
+      "Too many attempts. Please try again later.",
 
-      authStatus.textContent =
-        errors[code] || error.message || "Something went wrong.";
+    "auth/network-request-failed":
+      "Network error. Check your internet connection."
+  };
+
+  authStatus.textContent =
+    messages[error.code] ||
+    error.message ||
+    "Something went wrong.";
+}
+
+function showChatError(error) {
+  console.error(error);
+
+  chatStatus.textContent =
+    "Chat error: " +
+    (error.code || error.message || "unknown error");
+}
+
+function updateProfileDisplay(user) {
+  profileName.textContent =
+    user.displayName ||
+    (user.email ? user.email.split("@")[0] : "Chat member");
+
+  userEmail.textContent = user.email || "";
+
+  headerAvatar.src = user.photoURL || defaultAvatar;
+
+  headerAvatar.onerror = () => {
+    headerAvatar.onerror = null;
+    headerAvatar.src = defaultAvatar;
+  };
+}
+
+/* Switch between login and registration */
+
+switchMode.addEventListener("click", () => {
+  registering = !registering;
+
+  authSubmit.textContent =
+    registering ? "Create Account" : "Log In";
+
+  switchDescription.textContent =
+    registering
+      ? "Already have an account?"
+      : "Don't have an account?";
+
+  switchMode.textContent =
+    registering ? "Log In" : "Register";
+
+  el("password").autocomplete =
+    registering ? "new-password" : "current-password";
+
+  authStatus.textContent = "";
+});
+
+/* Login and registration */
+
+authForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const email = el("email").value.trim();
+  const password = el("password").value;
+
+  authStatus.textContent = "";
+  authSubmit.disabled = true;
+
+  try {
+    if (registering) {
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+    } else {
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
     }
+  } catch (error) {
+    showAuthError(error);
+  } finally {
+    authSubmit.disabled = false;
+  }
+});
 
-    function showChatError(error) {
-      console.error(error);
+/* Listen for new messages */
+
+function startMessageListener(user) {
+  if (stopListeningToMessages) {
+    stopListeningToMessages();
+    stopListeningToMessages = null;
+  }
+
+  messagesElement.replaceChildren();
+  chatStatus.textContent = "Loading messages...";
+
+  const messagesQuery = query(
+    messagesCollection,
+    orderBy("createdAt", "asc"),
+    limit(100)
+  );
+
+  stopListeningToMessages = onSnapshot(
+    messagesQuery,
+
+    snapshot => {
+      messagesElement.replaceChildren();
+
+      if (snapshot.empty) {
+        const p = document.createElement("p");
+
+        p.textContent = "No messages yet. Say hello!";
+
+        messagesElement.appendChild(p);
+      }
+
+      snapshot.forEach(docSnap => {
+        const message = docSnap.data();
+
+        const bubble = document.createElement("div");
+
+        bubble.className =
+          "message" +
+          (message.uid === user.uid ? " mine" : "");
+
+        const author = document.createElement("div");
+
+        author.className = "message-author";
+
+        author.textContent =
+          message.uid === user.uid
+            ? "You"
+            : (
+                message.displayName ||
+                message.email ||
+                "Chat member"
+              );
+
+        const text = document.createElement("div");
+
+        text.className = "message-text";
+        text.textContent = message.text || "";
+
+        const time = document.createElement("div");
+
+        time.className = "message-time";
+
+        time.textContent = message.createdAt
+          ? new Date(
+              message.createdAt.toMillis()
+            ).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit"
+            })
+          : "Sending...";
+
+        bubble.append(author, text, time);
+
+        messagesElement.appendChild(bubble);
+      });
+
+      messagesElement.scrollTop =
+        messagesElement.scrollHeight;
 
       chatStatus.textContent =
-        "Chat error: " + (error.code || error.message);
+        "Connected • Latest 100 messages";
+    },
+
+    error => {
+      showChatError(error);
     }
+  );
+}
 
-    try {
-
-      if (
-        firebaseConfig.apiKey === "YOUR_API_KEY" ||
-        firebaseConfig.authDomain === "YOUR_AUTH_DOMAIN" ||
-        firebaseConfig.projectId === "YOUR_PROJECT_ID" ||
-        firebaseConfig.appId === "YOUR_APP_ID"
-      ) {
-        throw new Error(
-          "Firebase configuration is missing. Replace the placeholder values in the code with your Firebase web app configuration."
-        );
-      }
-
-      const firebaseApp = initializeApp(firebaseConfig);
-
-      const auth = getAuth(firebaseApp);
-      const db = getFirestore(firebaseApp);
-
-      const messagesCollection = collection(db, "messages");
-
-
-      // =====================================
-      // STEP 3: REGISTER OR LOG IN
-      // =====================================
-
-      switchModeBtn.addEventListener("click", () => {
-
-        registering = !registering;
-
-        authSubmit.textContent =
-          registering ? "Create Account" : "Log In";
-
-        switchDescription.textContent =
-          registering
-            ? "Already have an account?"
-            : "Don't have an account?";
-
-        switchModeBtn.textContent =
-          registering ? "Log In" : "Register";
-
-        document.getElementById("password").autocomplete =
-          registering ? "new-password" : "current-password";
-
-        authStatus.textContent = "";
-
-      });
-
-
-      authForm.addEventListener("submit", async (event) => {
-
-        event.preventDefault();
-
-        const email =
-          document.getElementById("email").value.trim();
-
-        const password =
-          document.getElementById("password").value;
-
-        authStatus.textContent = "";
-        authSubmit.disabled = true;
-
-        try {
-
-          if (registering) {
-
-            await createUserWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
-
-          } else {
-
-            await signInWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
-
-          }
-
-        } catch (error) {
-
-          showAuthError(error);
-
-        } finally {
-
-          authSubmit.disabled = false;
-
-        }
-
-      });
-
-
-      // =====================================
-      // STEP 4: LISTEN FOR CHAT MESSAGES
-      // =====================================
-
-      function startMessageListener(user) {
-
-        if (stopListeningToMessages) {
-          stopListeningToMessages();
-          stopListeningToMessages = null;
-        }
-
-        messagesElement.replaceChildren();
-
-        chatStatus.textContent = "Loading messages...";
-
-        const messagesQuery = query(
-          messagesCollection,
-          orderBy("createdAt", "asc"),
-          limit(100)
-        );
-
-        stopListeningToMessages = onSnapshot(
-          messagesQuery,
-
-          (snapshot) => {
-
-            messagesElement.replaceChildren();
-
-            if (snapshot.empty) {
-
-              const emptyMessage = document.createElement("p");
-
-              emptyMessage.textContent =
-                "No messages yet. Say hello!";
-
-              messagesElement.appendChild(emptyMessage);
-
-            }
-
-            snapshot.forEach((documentSnapshot) => {
-
-              const message = documentSnapshot.data();
-
-              const bubble = document.createElement("div");
-
-              bubble.className =
-                "message" +
-                (message.uid === user.uid ? " mine" : "");
-
-              const author = document.createElement("div");
-
-              author.className = "message-author";
-
-              author.textContent =
-                message.uid === user.uid
-                  ? "You"
-                  : (message.email || "Chat member");
-
-              const text = document.createElement("div");
-
-              text.className = "message-text";
-
-              text.textContent = message.text || "";
-
-              const time = document.createElement("div");
-
-              time.className = "message-time";
-
-              if (message.createdAt) {
-
-                time.textContent =
-                  new Date(
-                    message.createdAt.toMillis()
-                  ).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  });
-
-              } else {
-
-                time.textContent = "Sending...";
-
-              }
-
-              bubble.appendChild(author);
-              bubble.appendChild(text);
-              bubble.appendChild(time);
-
-              messagesElement.appendChild(bubble);
-
-            });
-
-            messagesElement.scrollTop =
-              messagesElement.scrollHeight;
-
-            chatStatus.textContent =
-              "Connected • Latest 100 messages";
-
-          },
-
-          (error) => {
-
-            showChatError(error);
-
-          }
-
-        );
-
-      }
-
-
-      // =====================================
-      // STEP 5: SEND A MESSAGE
-      // =====================================
-
-      messageForm.addEventListener("submit", async (event) => {
-
-        event.preventDefault();
-
-        const user = auth.currentUser;
-
-        if (!user) {
-
-          chatStatus.textContent =
-            "Please log in before sending messages.";
-
-          return;
-
-        }
-
-        const text = messageInput.value.trim();
-
-        if (!text) {
-          return;
-        }
-
-        if (text.length > 1000) {
-
-          chatStatus.textContent =
-            "Messages cannot exceed 1000 characters.";
-
-          return;
-
-        }
-
-        sendBtn.disabled = true;
-
-        try {
-
-          await addDoc(messagesCollection, {
-
-            text: text,
-
-            uid: user.uid,
-
-            email: user.email || "Chat member",
-
-            createdAt: serverTimestamp()
-
-          });
-
-          messageInput.value = "";
-
-          messageInput.focus();
-
-        } catch (error) {
-
-          showChatError(error);
-
-        } finally {
-
-          sendBtn.disabled = false;
-
-        }
-
-      });
-
-
-      // =====================================
-      // STEP 6: LOG OUT
-      // =====================================
-
-      logoutBtn.addEventListener("click", async () => {
-
-        try {
-
-          await signOut(auth);
-
-        } catch (error) {
-
-          showChatError(error);
-
-        }
-
-      });
-
-
-      // =====================================
-      // STEP 7: CHECK THE LOGIN STATUS
-      // =====================================
-
-      onAuthStateChanged(auth, (user) => {
-
-        if (user) {
-
-          authPage.classList.add("hidden");
-
-          chatPage.classList.remove("hidden");
-
-          
-const profileRef = doc(db, "users", user.uid);
-
-getDoc(profileRef)
-  .then(async (profileSnap) => {
-    if (profileSnap.exists()) {
-      // Load the saved profile
-      const profile = profileSnap.data();
-
-      userEmail.textContent =
-        profile.displayName || user.email || "Chat member";
-    } else {
-      // Create a basic profile for a new user
-      const newProfile = {
-        uid: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || "Chat member",
-        createdAt: serverTimestamp()
-      };
-
-      await setDoc(profileRef, newProfile);
-
-      userEmail.textContent = newProfile.displayName;
-    }
-  })
-  .catch((error) => {
-    console.error("Error loading user profile:", error);
-    userEmail.textContent = user.email || "Chat member";
-  });
-
-
-          startMessageListener(user);
-
-        } else {
-
-          chatPage.classList.add("hidden");
-
-          authPage.classList.remove("hidden");
-
-          messagesElement.replaceChildren();
-
-          chatStatus.textContent = "Please log in.";
-
-          if (stopListeningToMessages) {
-
-            stopListeningToMessages();
-
-            stopListeningToMessages = null;
-
-          }
-
-        }
-
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      authPage.classList.remove("hidden");
-
-      authStatus.textContent = error.message;
-
-      authSubmit.disabled = true;
-
-    }
-
-  </script>
-<!-- CHATCONNECT PROFILE EDITOR -->
-<section id="profile-editor" style="display:none; padding:20px; max-width:500px; margin:auto;">
-  <h2>My Profile</h2>
-
-  <div style="text-align:center; margin-bottom:20px;">
-    <img id="profile-picture"
-         src="https://placehold.co/120x120?text=Profile"
-         alt="Profile picture"
-         style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
-
-    <br><br>
-
-    <input type="file" id="profile-picture-input" accept="image/*">
-  </div>
-
-  <label for="profile-name">Display Name</label>
-
-  <input type="text"
-         id="profile-name"
-         placeholder="Enter your name"
-         maxlength="50"
-         style="display:block;width:100%;padding:12px;margin:10px 0;box-sizing:border-box;">
-
-  <button id="save-profile"
-          type="button"
-          style="padding:12px 20px;cursor:pointer;">
-    Save Profile
-  </button>
-
-  <p id="profile-message" role="status"></p>
-</section>
-<!-- END CHATCONNECT PROFILE EDITOR -->
-</body>
-</html>
+/* Send
