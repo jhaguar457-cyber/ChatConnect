@@ -356,15 +356,47 @@ Pop<!DOCTYPE html>
     <div class="chat-container">
 
       <header class="chat-header">
-        <div>
-          <h2>ChatConnect 💬</h2>
-          <p id="userEmail">Connecting...</p>
-        </div>
+  <div>
+    <h2>ChatConnect 💬</h2>
 
-        <button id="logoutBtn" class="logout-btn" type="button">
-          Log Out
-        </button>
-      </header>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+      <img
+        id="headerAvatar"
+        src="https://placehold.co/50x50/4f46e5/ffffff?text=U"
+        alt="Profile picture"
+        style="width:40px;height:40px;border-radius:50%;object-fit:cover;"
+      >
+
+      <div>
+        <p id="profileName" style="margin:0;font-weight:bold;">
+          Chat member
+        </p>
+
+        <p id="userEmail" style="margin-top:4px;">
+          Connecting...
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <button
+      id="editProfileBtn"
+      class="logout-btn"
+      type="button"
+    >
+      Edit Profile
+    </button>
+
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+      type="button"
+    >
+      Log Out
+    </button>
+  </div>
+</header>
 
       <div class="room-title">
         🌍 Public Chat Room
@@ -853,6 +885,37 @@ const firebaseConfig = {
     }
 
   </script>
+<!-- CHATCONNECT PROFILE EDITOR -->
+<section id="profile-editor" style="display:none; padding:20px; max-width:500px; margin:auto;">
+  <h2>My Profile</h2>
 
+  <div style="text-align:center; margin-bottom:20px;">
+    <img id="profile-picture"
+         src="https://placehold.co/120x120?text=Profile"
+         alt="Profile picture"
+         style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
+
+    <br><br>
+
+    <input type="file" id="profile-picture-input" accept="image/*">
+  </div>
+
+  <label for="profile-name">Display Name</label>
+
+  <input type="text"
+         id="profile-name"
+         placeholder="Enter your name"
+         maxlength="50"
+         style="display:block;width:100%;padding:12px;margin:10px 0;box-sizing:border-box;">
+
+  <button id="save-profile"
+          type="button"
+          style="padding:12px 20px;cursor:pointer;">
+    Save Profile
+  </button>
+
+  <p id="profile-message" role="status"></p>
+</section>
+<!-- END CHATCONNECT PROFILE EDITOR -->
 </body>
 </html>
